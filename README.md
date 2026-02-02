@@ -268,7 +268,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📞 Contact
 
 **Aaron Meyer**
-- LinkedIn: [linkedin.com/in/aaronwmeyer](https://linkedin.com/in/aaronwmeyer)
+- LinkedIn: [linkedin.com/in/aaron-m](https://www.linkedin.com/in/aaron-m-35847510b/)
 - GitHub: [@AI-Mindset-Dev](https://github.com/AI-Mindset-Dev)
 - Project: [AWS GenAI Insurance Claims Processor](https://github.com/AI-Mindset-Dev/aws-genai-insurance-claims)
 
