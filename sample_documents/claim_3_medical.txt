@@ -1,0 +1,52 @@
+HEALTH INSURANCE CLAIM FORM
+Medical Treatment Claim
+
+Patient Information:
+Name: Jennifer Martinez
+Policy Number: HEALTH-2024-332109
+Date of Birth: 03/15/1985
+Member ID: JM332109
+
+Treatment Details:
+Date of Service: 2024-01-25
+Provider: Seattle Medical Center
+Treating Physician: Dr. Robert Williams, MD
+Reason for Visit: Emergency Room - Severe allergic reaction
+
+Incident Description:
+On January 25, 2024, I experienced a severe allergic reaction after dining at a restaurant. I developed hives, difficulty breathing, and facial swelling. My spouse drove me to the emergency room at Seattle Medical Center.
+
+Treatment Received:
+- Emergency room evaluation
+- Epinephrine injection
+- IV antihistamines
+- Observation for 4 hours
+- Prescription for EpiPen and antihistamines
+
+Diagnosis: Anaphylaxis due to food allergy (shellfish)
+
+Medical Costs:
+- Emergency room facility fee: $2,800
+- Physician services: $650
+- Medications administered: $420
+- Laboratory tests: $180
+- Prescriptions: $150
+Total Medical Expenses: $4,200
+
+Insurance Information:
+This was an emergency situation requiring immediate medical attention. I went to an in-network facility. My policy includes emergency coverage with a $250 copay.
+
+Claim Amount: $4,200
+Expected Patient Responsibility: $250 (ER copay)
+Amount Requesting from Insurance: $3,950
+
+Supporting Documentation:
+- Emergency room discharge summary
+- Itemized hospital bill
+- Prescription receipts
+- Physician notes
+
+I authorize release of medical information for claim processing.
+
+Patient Signature: Jennifer Martinez
+Date Submitted: 2024-01-28

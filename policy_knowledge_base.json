@@ -1,0 +1,80 @@
+{
+  "policies": [
+    {
+      "policy_type": "auto",
+      "coverage_limits": {
+        "liability": 100000,
+        "collision": 50000,
+        "comprehensive": 50000,
+        "medical": 10000
+      },
+      "deductibles": {
+        "collision": 500,
+        "comprehensive": 250
+      },
+      "exclusions": [
+        "Racing or speed contests",
+        "Intentional damage",
+        "Wear and tear",
+        "Mechanical breakdown"
+      ],
+      "required_documentation": [
+        "Police report (if applicable)",
+        "Photos of damage",
+        "Repair estimates",
+        "Medical bills (if injuries)"
+      ]
+    },
+    {
+      "policy_type": "property",
+      "coverage_limits": {
+        "dwelling": 250000,
+        "personal_property": 100000,
+        "liability": 300000,
+        "additional_living_expenses": 50000
+      },
+      "deductibles": {
+        "standard": 1000,
+        "hurricane": 5000
+      },
+      "exclusions": [
+        "Flood damage (requires separate policy)",
+        "Earthquake damage",
+        "Intentional damage",
+        "Normal wear and tear",
+        "Pest damage"
+      ],
+      "required_documentation": [
+        "Photos of damage",
+        "Repair estimates",
+        "Receipts for damaged items",
+        "Police report (if theft/vandalism)"
+      ]
+    },
+    {
+      "policy_type": "medical",
+      "coverage_limits": {
+        "annual_maximum": 1000000,
+        "out_of_pocket_maximum": 8000,
+        "emergency_room": 500,
+        "hospital_stay": 2000
+      },
+      "deductibles": {
+        "individual": 2000,
+        "family": 4000
+      },
+      "exclusions": [
+        "Cosmetic procedures",
+        "Experimental treatments",
+        "Pre-existing conditions (first 6 months)",
+        "Alternative medicine (unless approved)"
+      ],
+      "required_documentation": [
+        "Medical records",
+        "Itemized bills",
+        "Prescription receipts",
+        "Doctor's notes"
+      ]
+    }
+  ]
+}

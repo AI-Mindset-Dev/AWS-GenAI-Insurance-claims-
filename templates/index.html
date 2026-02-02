@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Claim Processor</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .content { padding: 40px; }
+        .upload-section {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+        .upload-section:hover { border-color: #764ba2; background: #f8f9ff; }
+        .upload-section.dragover { background: #e8ebff; border-color: #764ba2; }
+        input[type="file"] { display: none; }
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .upload-btn:hover { transform: scale(1.05); }
+        .sample-section {
+            background: #f8f9ff;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .sample-section h2 { color: #667eea; margin-bottom: 20px; }
+        .sample-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .sample-btn {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+        .sample-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .results {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-card {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+        .result-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .info-label {
+            font-size: 0.85em;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 600;
+        }
+        .summary-text {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .error {
+            background: #fee;
+            border-left: 5px solid #f44;
+            padding: 20px;
+            border-radius: 10px;
+            color: #c33;
+            display: none;
+        }
+        .star-rating {
+            font-size: 2em;
+            cursor: pointer;
+        }
+        .star {
+            color: #ddd;
+            transition: color 0.2s;
+        }
+        .star:hover,
+        .star.active {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Insurance Claim Processor</h1>
+            <p>AI-Powered Claim Analysis using AWS Bedrock</p>
+        </div>
+        
+        <div class="content">
+            <!-- Upload Section -->
+            <div class="upload-section" id="uploadSection">
+                <h2>📄 Upload Claim Document</h2>
+                <p style="margin: 20px 0; color: #666;">Drag and drop a file here, or click to browse</p>
+                <input type="file" id="fileInput" accept=".txt,.pdf,.doc,.docx">
+                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                    Choose File
+                </button>
+                <p id="fileName" style="margin-top: 20px; color: #667eea; font-weight: 600;"></p>
+            </div>
+
+            <!-- Sample Documents -->
+            <div class="sample-section">
+                <h2>📋 Try Sample Documents</h2>
+                <div class="sample-buttons">
+                    <button class="sample-btn" onclick="processSample(1)">
+                        🚗 Auto Accident
+                    </button>
+                    <button class="sample-btn" onclick="processSample(2)">
+                        🏠 Property Damage
+                    </button>
+                    <button class="sample-btn" onclick="processSample(3)">
+                        🏥 Medical Claim
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing claim with AI...</p>
+                <p style="color: #666; margin-top: 10px;">This may take 5-10 seconds</p>
+            </div>
+
+            <!-- Error -->
+            <div class="error" id="error"></div>
+
+            <!-- Results -->
+            <div class="results" id="results">
+                <div class="result-card" id="piiCard" style="display: none;">
+                    <h3>� Privacy & Security Check</h3>
+                    <div id="piiAlert" style="padding: 15px; border-radius: 10px; margin-bottom: 15px;"></div>
+                    <div id="piiDetails" style="background: white; padding: 15px; border-radius: 10px;"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h3>📊 Extracted Information</h3>
+                    <div class="info-grid" id="extractedInfo"></div>
+                </div>
+                
+                <div class="result-card" id="policyCard" style="display: none;">
+                    <h3>📋 Policy Context</h3>
+                    <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                        <div style="font-weight: 600; color: #667eea; margin-bottom: 10px;">
+                            Policy Type: <span id="policyType"></span>
+                        </div>
+                        <div id="coverageCheck" style="padding: 10px; border-radius: 5px; margin-bottom: 15px;"></div>
+                    </div>
+                    <div id="policyDetails"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h3>📝 AI-Generated Summary</h3>
+                    <div class="summary-text" id="summary"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h3>⭐ Rate This Result</h3>
+                    <div style="background: white; padding: 20px; border-radius: 10px;">
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Overall Rating:</label>
+                            <div class="star-rating" id="starRating">
+                                <span class="star" data-rating="1">☆</span>
+                                <span class="star" data-rating="2">☆</span>
+                                <span class="star" data-rating="3">☆</span>
+                                <span class="star" data-rating="4">☆</span>
+                                <span class="star" data-rating="5">☆</span>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">
+                                <input type="checkbox" id="extractionAccurate" checked> Extraction was accurate
+                            </label>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Summary Quality:</label>
+                            <select id="summaryQuality" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+                                <option value="5">Excellent (5)</option>
+                                <option value="4">Good (4)</option>
+                                <option value="3">Average (3)</option>
+                                <option value="2">Poor (2)</option>
+                                <option value="1">Very Poor (1)</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Comments (optional):</label>
+                            <textarea id="feedbackComments" rows="3" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;" placeholder="Any additional feedback..."></textarea>
+                        </div>
+                        <button onclick="submitFeedback()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; border: none; border-radius: 50px; cursor: pointer; font-size: 1em;">
+                            Submit Feedback
+                        </button>
+                        <div id="feedbackSuccess" style="display: none; margin-top: 15px; padding: 10px; background: #d4edda; color: #155724; border-radius: 5px;">
+                            ✓ Thank you for your feedback!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const uploadSection = document.getElementById('uploadSection');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const error = document.getElementById('error');
+
+        // File input change
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileName.textContent = `Selected: ${this.files[0].name}`;
+                uploadFile(this.files[0]);
+            }
+        });
+
+        // Drag and drop
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.classList.add('dragover');
+        });
+
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.classList.remove('dragover');
+        });
+
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                uploadFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            showLoading();
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    showError(data.error);
+                }
+            })
+            .catch(err => showError(err.message));
+        }
+
+        function processSample(id) {
+            showLoading();
+
+            fetch(`/sample/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    showError(data.error);
+                }
+            })
+            .catch(err => showError(err.message));
+        }
+
+        function showLoading() {
+            loading.style.display = 'block';
+            results.style.display = 'none';
+            error.style.display = 'none';
+        }
+
+        function showError(message) {
+            loading.style.display = 'none';
+            error.style.display = 'block';
+            error.textContent = `Error: ${message}`;
+        }
+
+        function displayResults(data) {
+            loading.style.display = 'none';
+            results.style.display = 'block';
+            error.style.display = 'none';
+
+            // Display PII detection if available
+            const piiCard = document.getElementById('piiCard');
+            if (data.pii_detection) {
+                piiCard.style.display = 'block';
+                
+                const piiAlert = document.getElementById('piiAlert');
+                const riskLevel = data.pii_detection.risk_level;
+                const totalPii = data.pii_detection.total_pii_found;
+                
+                // Set alert styling based on risk level
+                let bgColor, textColor, icon;
+                if (riskLevel === 'HIGH') {
+                    bgColor = '#f8d7da';
+                    textColor = '#721c24';
+                    icon = '⚠️';
+                } else if (riskLevel === 'MEDIUM') {
+                    bgColor = '#fff3cd';
+                    textColor = '#856404';
+                    icon = '⚡';
+                } else {
+                    bgColor = '#d4edda';
+                    textColor = '#155724';
+                    icon = '✓';
+                }
+                
+                piiAlert.style.background = bgColor;
+                piiAlert.style.color = textColor;
+                piiAlert.innerHTML = `
+                    <div style="font-weight: 600; font-size: 1.1em; margin-bottom: 5px;">
+                        ${icon} Risk Level: ${riskLevel}
+                    </div>
+                    <div>${data.pii_detection.recommendation}</div>
+                    <div style="margin-top: 10px; font-size: 0.9em;">
+                        Total PII Found: ${totalPii}
+                    </div>
+                `;
+                
+                // Display PII details
+                const piiDetails = document.getElementById('piiDetails');
+                if (Object.keys(data.pii_detection.detections).length > 0) {
+                    piiDetails.innerHTML = `
+                        <div style="font-weight: 600; color: #667eea; margin-bottom: 10px;">Detected PII Types:</div>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            ${Object.entries(data.pii_detection.detections).map(([type, info]) => 
+                                `<li style="margin: 5px 0;">
+                                    <strong>${info.description}</strong>: ${info.count} occurrence(s)
+                                    ${info.samples ? `<br><span style="color: #666; font-size: 0.9em;">Examples: ${info.samples.join(', ')}</span>` : ''}
+                                </li>`
+                            ).join('')}
+                        </ul>
+                    `;
+                } else {
+                    piiDetails.innerHTML = '<div style="color: #155724;">✓ No sensitive PII detected in this document</div>';
+                }
+            } else {
+                piiCard.style.display = 'none';
+            }
+
+            // Display extracted info
+            const infoGrid = document.getElementById('extractedInfo');
+            infoGrid.innerHTML = '';
+            
+            for (const [key, value] of Object.entries(data.extracted_info)) {
+                const item = document.createElement('div');
+                item.className = 'info-item';
+                item.innerHTML = `
+                    <div class="info-label">${key.replace(/_/g, ' ')}</div>
+                    <div class="info-value">${value}</div>
+                `;
+                infoGrid.appendChild(item);
+            }
+
+            // Display policy context if available
+            const policyCard = document.getElementById('policyCard');
+            if (data.policy_context) {
+                policyCard.style.display = 'block';
+                
+                // Policy type
+                document.getElementById('policyType').textContent = 
+                    data.policy_type.charAt(0).toUpperCase() + data.policy_type.slice(1);
+                
+                // Coverage check
+                const coverageCheck = document.getElementById('coverageCheck');
+                coverageCheck.textContent = data.coverage_check;
+                coverageCheck.style.background = data.coverage_check.includes('✓') ? '#d4edda' : '#fff3cd';
+                coverageCheck.style.color = data.coverage_check.includes('✓') ? '#155724' : '#856404';
+                
+                // Policy details
+                const policyDetails = document.getElementById('policyDetails');
+                policyDetails.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div style="background: white; padding: 15px; border-radius: 10px;">
+                            <div style="font-weight: 600; color: #667eea; margin-bottom: 10px;">Coverage Limits</div>
+                            ${Object.entries(data.policy_context.coverage_limits).map(([k, v]) => 
+                                `<div style="margin: 5px 0;">${k.replace(/_/g, ' ')}: $${v.toLocaleString()}</div>`
+                            ).join('')}
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 10px;">
+                            <div style="font-weight: 600; color: #667eea; margin-bottom: 10px;">Deductibles</div>
+                            ${Object.entries(data.policy_context.deductibles).map(([k, v]) => 
+                                `<div style="margin: 5px 0;">${k.replace(/_/g, ' ')}: $${v.toLocaleString()}</div>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                        <div style="font-weight: 600; color: #667eea; margin-bottom: 10px;">Exclusions</div>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            ${data.policy_context.exclusions.map(e => `<li style="margin: 5px 0;">${e}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                        <div style="font-weight: 600; color: #667eea; margin-bottom: 10px;">Required Documentation</div>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            ${data.policy_context.required_documentation.map(d => `<li style="margin: 5px 0;">${d}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            } else {
+                policyCard.style.display = 'none';
+            }
+
+            // Display summary
+            document.getElementById('summary').textContent = data.summary;
+            
+            // Store current document name for feedback
+            window.currentDocument = data.filename;
+        }
+        
+        // Star rating functionality
+        let selectedRating = 0;
+        document.querySelectorAll('.star').forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.rating);
+                updateStars(selectedRating);
+            });
+            
+            star.addEventListener('mouseover', function() {
+                updateStars(parseInt(this.dataset.rating));
+            });
+        });
+        
+        document.getElementById('starRating').addEventListener('mouseleave', function() {
+            updateStars(selectedRating);
+        });
+        
+        function updateStars(rating) {
+            document.querySelectorAll('.star').forEach((star, index) => {
+                if (index < rating) {
+                    star.textContent = '★';
+                    star.classList.add('active');
+                } else {
+                    star.textContent = '☆';
+                    star.classList.remove('active');
+                }
+            });
+        }
+        
+        function submitFeedback() {
+            if (selectedRating === 0) {
+                alert('Please select a rating');
+                return;
+            }
+            
+            const feedbackData = {
+                document_name: window.currentDocument,
+                rating: selectedRating,
+                extraction_accurate: document.getElementById('extractionAccurate').checked,
+                summary_quality: parseInt(document.getElementById('summaryQuality').value),
+                comments: document.getElementById('feedbackComments').value,
+                model_used: 'claude-3-sonnet'
+            };
+            
+            fetch('/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(feedbackData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('feedbackSuccess').style.display = 'block';
+                    setTimeout(() => {
+                        document.getElementById('feedbackSuccess').style.display = 'none';
+                    }, 3000);
+                    
+                    // Reset form
+                    selectedRating = 0;
+                    updateStars(0);
+                    document.getElementById('extractionAccurate').checked = true;
+                    document.getElementById('summaryQuality').value = '5';
+                    document.getElementById('feedbackComments').value = '';
+                }
+            })
+            .catch(err => console.error('Feedback error:', err));
+        }
+    </script>
+</body>
+</html>
